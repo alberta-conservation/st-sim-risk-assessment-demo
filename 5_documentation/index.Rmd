@@ -46,7 +46,7 @@ library(knitr)
 ```
 
 
-
+# Importing a geodatabase into PostgreSQL 
 ```{r child = '1_scripts/00_importing-geodatabase-to-postgres.Rmd'}
 ```
 

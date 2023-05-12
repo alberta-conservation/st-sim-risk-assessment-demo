@@ -1,5 +1,4 @@
 
-## Import file geodatabase into PostreSQL  
 
 ```{r setup, include=FALSE, cache=FALSE}
 #Set root directory to R project root
@@ -21,7 +20,7 @@ For this demonstration, we will be using the Alberta Derived Ecosite Phase datab
 Unzip the files to the location of your choice. 
 
 
-**In the Command Prompt Shell** 
+## In the Command Prompt Shell
 
 To open the command prompt in Windows, type 'cmd' into the search bar at the bottom left of the screen, then hit Enter. 
 
@@ -39,7 +38,7 @@ Next, type in:
 **Add the PostGIS extension**  
 > CREATE EXTENSION postgis;
 
-**Close the command prompt shell and open the OSGeo4W Shell**  
+## Close the command prompt shell and open the OSGeo4W Shell  
 *The shell will probably open in the C: drive. If that is not where your Postgres database is located, switch to the drive where it is located (for example, the D: drive)*  
 \n   
 > d:
