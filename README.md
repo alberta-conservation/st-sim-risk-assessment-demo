@@ -1,8 +1,13 @@
 - <a href="#overview" id="toc-overview">1 Overview</a>
-  - <a href="#import-file-geodatabase-into-postresql"
-    id="toc-import-file-geodatabase-into-postresql">1.1 Import file
-    geodatabase into PostreSQL</a>
-- <a href="#references" id="toc-references">2 References</a>
+- <a href="#importing-a-geodatabase-into-postgresql"
+  id="toc-importing-a-geodatabase-into-postgresql">2 Importing a
+  geodatabase into PostgreSQL</a>
+  - <a href="#in-the-command-prompt-shell"
+    id="toc-in-the-command-prompt-shell">2.1 In the Command Prompt Shell</a>
+  - <a href="#close-the-command-prompt-shell-and-open-the-osgeo4w-shell"
+    id="toc-close-the-command-prompt-shell-and-open-the-osgeo4w-shell">2.2
+    Close the command prompt shell and open the OSGeo4W Shell</a>
+- <a href="#references" id="toc-references">3 References</a>
 
 # 1 Overview
 
@@ -24,7 +29,7 @@ decision-making process \[@milner-gulland2010a\].
 simple state-and-transition simulation model and use it to assess the
 forecast population responses by a species of interest.
 
-## 1.1 Import file geodatabase into PostreSQL
+# 2 Importing a geodatabase into PostgreSQL
 
 Very often, landscape simulation models require the storage and
 processing of very large geospatial databases (10s to 100s of GB) that
@@ -49,7 +54,7 @@ downloaded
 
 Unzip the files to the location of your choice.
 
-**In the Command Prompt Shell**
+## 2.1 In the Command Prompt Shell
 
 To open the command prompt in Windows, type ‘cmd’ into the search bar at
 the bottom left of the screen, then hit Enter.
@@ -67,7 +72,8 @@ Next, type in:
 **Add the PostGIS extension**  
 \> CREATE EXTENSION postgis;
 
-**Close the command prompt shell and open the OSGeo4W Shell**  
+## 2.2 Close the command prompt shell and open the OSGeo4W Shell
+
 *The shell will probably open in the C: drive. If that is not where your
 Postgres database is located, switch to the drive where it is located
 (for example, the D: drive)*  
@@ -85,7 +91,7 @@ an inevitable consequence of converting the .gdb format into a simple
 features object in Postgres, and for this database there are only a few
 polygons lost.*
 
-# 2 References
+# 3 References
 
 <div id="refs">
 
