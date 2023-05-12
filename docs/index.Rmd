@@ -1,0 +1,42 @@
+---
+title: "Title"
+subtitle: "Subtitle"
+author: "Author"
+institute: "Affiliation"
+date: "(updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    seal: false
+    chakra: libs/remark-latest.min.js
+    nature:
+      ratio:  '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      self_contained: true
+---
+
+layout: true
+
+background-image: url('your background image')
+background-size: cover
+
+---
+
+# Presentation Title 
+
+### *Presentation sub-title* 
+
+
+
+## Author 1 | Author 2 | Author... 
+### `r format(Sys.time(), "%d %B, %Y")`  
+
+## <a href="Link to presentation website">Presentation Link</a>
+<br />
+
+##### Background image credit: 
+---
+
+

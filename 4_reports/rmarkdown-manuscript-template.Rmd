@@ -1,0 +1,39 @@
+---
+date: '`r format(Sys.time(), "%d %B, %Y")`' 
+
+bibliography: 'path to citation library .bib file' 
+csl: 'path to .csl format file' 
+
+output: 
+  word_document:
+    reference_docx: 'path to word reference document' 
+
+fontsize: 12pt
+mainfont: Times New Roman
+
+fig_caption: yes
+---
+
+# Working Title: 
+
+# Author(s): 'Author Name'^1^ 
+
+^1^'Author affiliation'
+
+# Introduction  
+
+# Methods  
+
+
+## Study Area 
+
+
+# Discussion  
+
+
+# Literature Cited 
+
+
+
+
+

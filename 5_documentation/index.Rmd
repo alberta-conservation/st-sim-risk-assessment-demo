@@ -1,0 +1,57 @@
+--- 
+title: "Demonstration of running a biodiversity risk assessment with SyncroSim software, and the ST-Sim package, via R"
+author: "Andy Crosby"
+site: bookdown::bookdown_site
+output: 
+  md_document:
+    variant: gfm
+    toc: TRUE
+    toc_depth: 2
+    number_sections: TRUE
+#bibliography: library.bib
+#citation-style: ../../MendeleyBib/CitationStyles/nature.csl
+#citation-style: https://www.zotero.org/styles/elsevier-harvard
+documentclass: book
+link-citations: true
+github-repo: https://github.com/alberta-conservation/st-sim-risk-assessment-demo.git
+description: "This is document walks through the process of running a basic state-and-transition simulation model and assessing population risk to a species of interest."
+
+
+---
+
+# Overview
+
+```{r GlobalOptions, echo=FALSE}
+options(bookdown.render.file_scope = FALSE, knitr.duplicate.label = "allow") 
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+```
+
+```{r setup, include=FALSE, cache=FALSE}
+#Set root directory to R project root
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+```
+
+```{r echo=FALSE, out.width = '100%'}
+library(kableExtra)
+library(knitr)
+```
+
+
+
+# Example Project
+
+**Project description**
+The Objective of this project is to develop a simple state-and-transition simulation model and use it to assess the risk to a species of interest 
+
+
+
+
+```{r child = '1_scripts/00_importing-geodatabase-to-postgres.Rmd'}
+```
+
+
+
+# References
+
+
+<div id="refs"></div>
