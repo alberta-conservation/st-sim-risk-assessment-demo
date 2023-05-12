@@ -20,6 +20,15 @@ description: "This is document walks through the process of running a basic stat
 ---
 
 # Overview
+One of the most pressing problems in ecology and conservation is understanding effects of anthropogenic disturbance and climate change on wildlife populations and biodiversity [@Venier2021]. Complicating this understanding is the fact that these cumulative effects are occurring within the context of global climate change, meaning that models based on historical responses to disturbance might no longer be valid [@Jackson2021], leading to unanticipated outcomes from management actions. Anticipating and responding to potential ecosystem changes from the interactions of anthropogenic disturbance with climate change, and risks to biodiversity from those changes, requires a probabilistic ecological forecasting approach within a risk assessment framework to quantify the risks and uncertainties, and ultimately inform the decision-making process [@milner-gulland2010a].  
+
+
+
+**Project description**
+The Objective of this project is to develop a simple state-and-transition simulation model and use it to assess the forecast population responses by a species of interest. 
+
+
+
 
 ```{r GlobalOptions, echo=FALSE}
 options(bookdown.render.file_scope = FALSE, knitr.duplicate.label = "allow") 
@@ -35,14 +44,6 @@ knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 library(kableExtra)
 library(knitr)
 ```
-
-
-
-# Example Project
-
-**Project description**
-The Objective of this project is to develop a simple state-and-transition simulation model and use it to assess the risk to a species of interest 
-
 
 
 
