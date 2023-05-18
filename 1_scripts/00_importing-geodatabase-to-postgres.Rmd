@@ -15,9 +15,9 @@ For information and instructions on downloading PostgreSQL and setting up the Po
 
 For this demonstration, we will be using the Alberta Derived Ecosite Phase database as our baseline natural land-cover database, which can be downloaded [here](https://open.alberta.ca/opendata/gda-ae37f83c-c994-47a9-b2f0-39ba1da0e64c). 
 
-
-
 Unzip the files to the location of your choice. 
+
+**And by all means, if you are more comfortable working in ArcGIS or Python, do it that way.**  
 
 
 ## In the Command Prompt Shell
@@ -45,10 +45,9 @@ Next, type in:
 
 **Load the geodatabase into the st_sim_demo database**  
 \n   
-> ogr2ogr -f "PostgreSQL" PG:"host=localhost port=5432 dbname=st_sim_demo user=postgres" D:\abc_program\projects\st-sim-risk-assessment-demo\0_data\raw\provincial_dep_v2.gdb -overwrite -progress --config PG_USE_COPY YES  
+> ogr2ogr -f "PostgreSQL" PG:"host=localhost port=5432 dbname=st_sim_demo user=postgres" path_to_geodatabase.gdb -overwrite -progress --config PG_USE_COPY YES  
 
 *Note: there will probably be a few error messages because of geometry type mismatches (Multisurface instead of Multipolygon). This seems like an inevitable consequence of converting the .gdb format into a simple features object in Postgres, and for this database there are only a few polygons lost.*    
-
 
 
 

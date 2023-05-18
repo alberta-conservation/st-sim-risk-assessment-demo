@@ -50,6 +50,12 @@ library(knitr)
 ```{r child = '1_scripts/00_importing-geodatabase-to-postgres.Rmd'}
 ```
 
+# Data processing  
+```{r child = '1_scripts/01-1_rasterize-subregions.Rmd'}
+```
+
+```{r child = '1_scripts/01-2_rasterize-dep.Rmd'}
+```
 
 
 # References

@@ -1,0 +1,99 @@
+# Rasterize landcover 
+
+I am classifying landcover using the Alberta Derived Ecosite Phase database [governmentofalberta2020], which classifies landcover polygons according to geography, soil, moisture regime, and dominant vegetation. These instructions are for interacting with the data stored in a PostgreSQL database, but if you have it stored in another place, just modify your code to interact with it that way. 
+
+```{r setup, include=FALSE, cache=FALSE}
+#Set root directory to R project root
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+
+
+library(RPostgreSQL)
+library(sf)
+library(tidyverse)
+library(terra)
+
+```
+
+
+Connect to the PostgreSQL database 
+```{r, eval = FALSE} 
+
+# Enter the username and password without putting it into your code
+# Note: Once you enter these, they will be visible in your R environment, so I remove them after connecting to the database
+username <- rstudioapi::askForPassword("Database username")
+password <- rstudioapi::askForPassword("Database password")
+
+pg = dbDriver("PostgreSQL")
+# Local Postgres.app database; no password by default
+# Of course, you fill in your own database information here.
+con = dbConnect(pg, user = username, password = password,
+                host = "localhost", port = 5432, dbname = "st_sim_demo")
+rm(list = c("username", "password"))
+
+```
+
+
+Now, to the reason we are using Postgres for some of our data processing. The amount of memory needed to load the dep dataset into R, and then clip it to the L3 FMU layer, would crash the program on most computers. Sending the job to Postgres as a query, though, works just fine. 
+
+```{r, eval = FALSE}
+
+dep_l3 <- st_read(con, query = "SELECT * 
+                  FROM dep 
+                  WHERE ST_Intersects(dep.shape, (
+                  SELECT geometry 
+                  FROM fmu_l3
+                  WHERE fmu_name = 'L3'));")
+
+
+dep_l3$raster_code <- as.numeric(as.factor(dep_l3$ep_code)) 
+
+dep_l3 <- st_write(dep_l3, con, "dep_l3")
+
+```
+
+The next step is to rasterize the dep data so that it can be input into the st-sim model. I will start by creating a template raster from the L3 FMU layer using a 100m cell resolution. The I will use the template to rasterize the dep polygons. 
+```{r, eval = FALSE}
+# Create the template raster
+box <- st_bbox(fmu_l3)
+
+l3_rast <- terra::crop(rast(xmin = box$xmin, xmax = box$xmax, ymin = box$ymin, ymax = box$ymax, crs = crs(fmu), resolution = 100, vals = 1), vect(fmu_l3), mask = TRUE)
+
+dep_l3_rast <- terra::crop(terra::rasterize(x = vect(dep_l3), y = l3_rast, field = "ep_code"), vect(fmu_l3), mask = TRUE)
+
+# Check to make sure it passes the eye test
+plot(dep_l3_rast)
+
+# Write the raster to file
+terra::writeRaster(dep_l3_rast, "0_data/processed/rasters/dep_l3.tif")
+
+```
+
+
+Finally, I am using a simplified version of the ecosystem classes for this demo using the 9 classes derived from @Hart2019, so we need a look up file to reclassify the raster with. 
+
+```{r, eval = FALSE}
+# Read in the dep lookup file
+dep_lookup <- read.csv("0_data/st-sim/dep_lookup.csv")
+
+# Create the reclassification table 
+reclass <- data.frame(id = as.numeric(as.factor(dep_lookup$ep_code)), v = as.numeric(as.factor(dep_lookup$ep_code_hart)))
+
+# Create the new raster 
+dep_l3_hart <- dep_l3_rast
+
+# Re set the ep codes to numeric values
+values(dep_l3_hart) <- as.numeric(as.factor(values(dep_l3_hart))) - 1 
+
+# Set the 0 and 41 values to NA
+dep_l3_hart <- subst(dep_l3_hart, c(0, 41), NA) 
+
+dep_l3_hart <- subst(x = dep_l3_hart, from = reclass$id, to = reclass$v) 
+plot(dep_l3_hart)  # Give it the eye test
+
+writeRaster(dep_l3_hart, "0_data/processed/rasters/dep_l3_hart.tif", overwrite = TRUE)
+
+```
+
+
+
+
