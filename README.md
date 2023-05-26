@@ -126,7 +126,7 @@ a hard time working with upper case letters in the field names.
 nrsa <- st_read("0_data/raw/shapefiles/Natural_Regions_Subregions_of_Alberta/Natural_Regions_Subregions_of_Alberta.shp")
 colnames(nrsa) <- tolower(colnames(nrsa))
 
-fmu_l3 <- st_transform(st_read("0_data/raw/alberta_fmu/data/data/BF_FMU_POLYGON_10TM/BF_FMU_POLYGON_10TM.shp"), crs = 3400)
+fmu <- st_transform(st_read("0_data/raw/alberta_fmu/data/data/BF_FMU_POLYGON_10TM/BF_FMU_POLYGON_10TM.shp"), crs = 3400)
 colnames(fmu) <- tolower(colnames(fmu))
 
 # Filter the L3 fmu 
@@ -155,6 +155,7 @@ rm(list = c("username", "password"))
 st_write(fmu, con, layer = "alberta_fmu")
 st_write(fmu_l3, con, layer = "fmu_l3") 
 st_write(nrsa, con, layer = "alberta_natural_subregions") 
+st_write(fmu_l3, "0_data/processed/shapefiles/fmu_l3.shp") 
 ```
 
 We will create the rasters using the ‘rasterize’ command from the
@@ -273,14 +274,15 @@ reclass <- data.frame(id = as.numeric(as.factor(dep_lookup$ep_code)), v = as.num
 # Create the new raster 
 dep_l3_hart <- dep_l3_rast
 
-# Re set the ep codes to numeric values
+# Re-set the ep codes to numeric values (the 'subst' command requires numeric values)
 values(dep_l3_hart) <- as.numeric(as.factor(values(dep_l3_hart))) - 1 
 
 # Set the 0 and 41 values to NA
 dep_l3_hart <- subst(dep_l3_hart, c(0, 41), NA) 
 
 dep_l3_hart <- subst(x = dep_l3_hart, from = reclass$id, to = reclass$v) 
-plot(dep_l3_hart)  # Give it the eye test
+plot(dep_l3_hart)  # Give it the eye test 
+
 
 writeRaster(dep_l3_hart, "0_data/processed/rasters/dep_l3_hart.tif", overwrite = TRUE)
 ```
