@@ -81,14 +81,15 @@ reclass <- data.frame(id = as.numeric(as.factor(dep_lookup$ep_code)), v = as.num
 # Create the new raster 
 dep_l3_hart <- dep_l3_rast
 
-# Re set the ep codes to numeric values
+# Re-set the ep codes to numeric values (the 'subst' command requires numeric values)
 values(dep_l3_hart) <- as.numeric(as.factor(values(dep_l3_hart))) - 1 
 
 # Set the 0 and 41 values to NA
 dep_l3_hart <- subst(dep_l3_hart, c(0, 41), NA) 
 
 dep_l3_hart <- subst(x = dep_l3_hart, from = reclass$id, to = reclass$v) 
-plot(dep_l3_hart)  # Give it the eye test
+plot(dep_l3_hart)  # Give it the eye test 
+
 
 writeRaster(dep_l3_hart, "0_data/processed/rasters/dep_l3_hart.tif", overwrite = TRUE)
 

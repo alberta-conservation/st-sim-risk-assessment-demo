@@ -22,7 +22,7 @@ We delineate sub-regions using the **Natural Regions and Sub-regions database** 
 nrsa <- st_read("0_data/raw/shapefiles/Natural_Regions_Subregions_of_Alberta/Natural_Regions_Subregions_of_Alberta.shp")
 colnames(nrsa) <- tolower(colnames(nrsa))
 
-fmu_l3 <- st_transform(st_read("0_data/raw/alberta_fmu/data/data/BF_FMU_POLYGON_10TM/BF_FMU_POLYGON_10TM.shp"), crs = 3400)
+fmu <- st_transform(st_read("0_data/raw/alberta_fmu/data/data/BF_FMU_POLYGON_10TM/BF_FMU_POLYGON_10TM.shp"), crs = 3400)
 colnames(fmu) <- tolower(colnames(fmu))
 
 # Filter the L3 fmu 
@@ -51,6 +51,7 @@ rm(list = c("username", "password"))
 st_write(fmu, con, layer = "alberta_fmu")
 st_write(fmu_l3, con, layer = "fmu_l3") 
 st_write(nrsa, con, layer = "alberta_natural_subregions") 
+st_write(fmu_l3, "0_data/processed/shapefiles/fmu_l3.shp") 
 
 ```
 
