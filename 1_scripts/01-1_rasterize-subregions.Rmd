@@ -1,16 +1,18 @@
 # Rasterize subregions 
 
-```{r setup, include=FALSE, cache=FALSE}
-#Set root directory to R project root
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+```{r setup, include=FALSE, cache=FALSE} 
 
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 
 library(RPostgreSQL)
 library(sf)
 library(tidyverse)
 library(terra)
 
+getwd()
+
 ```
+
 
 An ST-Sim model requires a raster that delineates the study area. In many ST-Sim analyses, there will be >1 sub-region within the main study area, with some parameters and transition probabilities differing between sub-regions. In this demo, I am limiting the analysis to a single Forest Management Unit (FMU) in Alberta, so we are not too worried about sub-regions, but we will go through the process anyway. 
 
@@ -65,7 +67,7 @@ box <- st_bbox(fmu_l3)
 l3_rast <- terra::crop(rast(xmin = box$xmin, xmax = box$xmax, ymin = box$ymin, ymax = box$ymax, crs = crs(fmu), resolution = 100, vals = 1), vect(fmu_l3), mask = TRUE)
 plot(l3_rast)
 
-
+writeRaster(l3_rast, "0_data/processed/rasters/l3_rast.tif")
 
 ```
 

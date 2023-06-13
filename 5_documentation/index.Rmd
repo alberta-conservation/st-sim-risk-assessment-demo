@@ -57,6 +57,9 @@ library(knitr)
 ```{r child = '1_scripts/01-2_rasterize-dep.Rmd'}
 ```
 
+```{r child = '1_scripts/01-3_rasterize-historic-fire.Rmd'}
+```
+
 
 # References
 

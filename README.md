@@ -1,19 +1,14 @@
-- <a href="#overview" id="toc-overview">1 Overview</a>
-- <a href="#importing-a-geodatabase-into-postgresql"
-  id="toc-importing-a-geodatabase-into-postgresql">2 Importing a
-  geodatabase into PostgreSQL</a>
-  - <a href="#in-the-command-prompt-shell"
-    id="toc-in-the-command-prompt-shell">2.1 In the Command Prompt Shell</a>
-  - <a href="#close-the-command-prompt-shell-and-open-the-osgeo4w-shell"
-    id="toc-close-the-command-prompt-shell-and-open-the-osgeo4w-shell">2.2
-    Close the command prompt shell and open the OSGeo4W Shell</a>
-- <a href="#data-processing" id="toc-data-processing">3 Data
-  processing</a>
-- <a href="#rasterize-subregions" id="toc-rasterize-subregions">4
-  Rasterize subregions</a>
-- <a href="#rasterize-landcover" id="toc-rasterize-landcover">5 Rasterize
-  landcover</a>
-- <a href="#references" id="toc-references">6 References</a>
+- [1 Overview](#overview)
+- [2 Importing a geodatabase into
+  PostgreSQL](#importing-a-geodatabase-into-postgresql)
+  - [2.1 In the Command Prompt Shell](#in-the-command-prompt-shell)
+  - [2.2 Close the command prompt shell and open the OSGeo4W
+    Shell](#close-the-command-prompt-shell-and-open-the-osgeo4w-shell)
+- [3 Data processing](#data-processing)
+- [4 Rasterize subregions](#rasterize-subregions)
+- [5 Rasterize landcover](#rasterize-landcover)
+- [6 Rasterize historic fire](#rasterize-historic-fire)
+- [7 References](#references)
 
 # 1 Overview
 
@@ -169,6 +164,8 @@ box <- st_bbox(fmu_l3)
 
 l3_rast <- terra::crop(rast(xmin = box$xmin, xmax = box$xmax, ymin = box$ymin, ymax = box$ymax, crs = crs(fmu), resolution = 100, vals = 1), vect(fmu_l3), mask = TRUE)
 plot(l3_rast)
+
+writeRaster(l3_rast, "0_data/processed/rasters/l3_rast.tif")
 ```
 
 ``` r
@@ -287,7 +284,19 @@ plot(dep_l3_hart)  # Give it the eye test
 writeRaster(dep_l3_hart, "0_data/processed/rasters/dep_l3_hart.tif", overwrite = TRUE)
 ```
 
-# 6 References
+# 6 Rasterize historic fire
+
+I am simulating temporal variability in overall burn probabilities, and
+typical fire sizes, by deriving them from Alberta’s historic fire
+database. This is a shapefile that can be downloaded
+![here](https://www.alberta.ca/assets/documents/HistoricalWildfirePerimeters.zip),
+as the
+
+``` r
+hist_fire <- st_read("0_data/raw/HistoricalWildfirePerimeters/WildfirePerimeters1931to2022.shp")
+```
+
+# 7 References
 
 <div id="refs">
 
