@@ -289,11 +289,72 @@ writeRaster(dep_l3_hart, "0_data/processed/rasters/dep_l3_hart.tif", overwrite =
 I am simulating temporal variability in overall burn probabilities, and
 typical fire sizes, by deriving them from Alberta’s historic fire
 database. This is a shapefile that can be downloaded
-![here](https://www.alberta.ca/assets/documents/HistoricalWildfirePerimeters.zip),
-as the
+![here](https://www.alberta.ca/wildfire-maps-and-data.aspx), as the
+‘Historic Wildfire Perimeter Data: 1931 to 1922’.
+
+To ensure the data used in the simulations reflected the modern fire
+regime in the region, I limited to data to only those fires occurring
+since 2006 within the boreal ecological region of Alberta.
 
 ``` r
+# Load the fire database. 
 hist_fire <- st_read("0_data/raw/HistoricalWildfirePerimeters/WildfirePerimeters1931to2022.shp")
+
+# Filter to only fires occurring since 2006. 
+fire_2006 <- hist_fire %>% filter(YEAR >= 2006)
+
+# Load the natural regions database and clip the fire data to the Boreal ecological region. 
+nr <- st_read("0_data/raw/Natural_Regions_Subregions_of_Alberta/Natural_Regions_Subregions_of_Alberta.shp")
+
+nr_boreal <- nr %>% filter(NRNAME == "Boreal")
+
+fire_boreal <- fire_2006[nr_boreal, ]
+
+st_write(fire_boreal, "0_data/processed/shapefiles/fire_boreal_2006-2022.shp")
+```
+
+The next step is to characterize temporal variability in amount of area
+burned as the total area burned in a year divided by the mean area
+burned among all years to create the distribution of fire multipliers
+$y$, where $y=1$ is the mean and $0< y<\infty$. In the ST-Sim model,
+this allows the total amount of area burned to vary stochastically
+around the mean by randomly drawing a multiplier from the distribution
+at each time step, and multiplying the baseline burn probabilities by
+that number for that time step.
+
+``` r
+yr_var <- st_drop_geometry(fire_boreal %>% group_by(YEAR) %>% summarise(total_area = sum(HECTARES_U)))
+
+yr_var$area_mean <- yr_var$total_area/mean(yr_var$total_area) 
+write.csv(yr_var, file = "0_data/st-sim/hist-fire-variability.csv")
+```
+
+Finally, create a distribution of maximum fire sizes for the simulator
+to draw from by binning them and counting the number of fires in each
+bin. Because the distribution of sizes is so strongly right-skewed, use
+the log of the area burned for binning so that the bins can capture the
+full range of fire sizes rather then lumping them all into the smallest
+size category. The code will pre-emptively format the table for loading
+into SyncroSim.
+
+``` r
+# Some of the fires have area = 0, so remove those first. 
+fire <- fire_boreal %>% filter(HECTARES_U > 0) 
+
+# This is a strongly right-skewed distribution, so to include the full range of fire, including the largest, bin them using the log of the area rather than the area
+fire_size_bins <- st_drop_geometry(fire) %>% select(FIRENUMBER, HECTARES_U) %>% 
+  mutate(area_bin = cut(log(HECTARES_U), breaks = 10))
+fire_size_bins$bin_num <- as.numeric(fire_size_bins$area_bin)
+
+fire_size_bins <- st_drop_geometry(fire) %>% select(FIRENUMBER, HECTARES_U) %>% 
+  mutate(area_bin = cut(log(HECTARES_U), breaks = 10))
+fire_size_bins$bin_num <- as.numeric(fire_size_bins$area_bin)
+
+area_bins <- data.frame(TransitionGroupID = "Fire [Type]", fire_size_bins %>% group_by(bin_num) %>% summarise(MaximumArea =  max(HECTARES_U), RelativeAmount = length(HECTARES_U)) %>% select(-bin_num))
+print(area_bins)
+
+
+write.csv(area_bins, "0_data/st-sim/fire_area_bins.csv", row.names = FALSE)
 ```
 
 # 7 References
