@@ -7,7 +7,7 @@
 - [3 Data processing](#data-processing)
 - [4 Rasterize subregions](#rasterize-subregions)
 - [5 Rasterize landcover](#rasterize-landcover)
-- [6 Rasterize historic fire](#rasterize-historic-fire)
+- [6 Historic fire distributions](#historic-fire-distributions)
 - [7 References](#references)
 
 # 1 Overview
@@ -284,7 +284,7 @@ plot(dep_l3_hart)  # Give it the eye test
 writeRaster(dep_l3_hart, "0_data/processed/rasters/dep_l3_hart.tif", overwrite = TRUE)
 ```
 
-# 6 Rasterize historic fire
+# 6 Historic fire distributions
 
 I am simulating temporal variability in overall burn probabilities, and
 typical fire sizes, by deriving them from Alberta’s historic fire
