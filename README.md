@@ -5,11 +5,11 @@
   - [2.2 Close the command prompt shell and open the OSGeo4W
     Shell](#close-the-command-prompt-shell-and-open-the-osgeo4w-shell)
 - [3 Data processing](#data-processing)
-- [4 Rasterize subregions](#rasterize-subregions)
-- [5 Rasterize landcover](#rasterize-landcover)
-- [6 Historic fire distributions](#historic-fire-distributions)
-- [7 Rasterize seismic lines](#rasterize-seismic-lines)
-- [8 References](#references)
+  - [3.1 Rasterize subregions](#rasterize-subregions)
+  - [3.2 Rasterize landcover](#rasterize-landcover)
+  - [3.3 Historic fire distributions](#historic-fire-distributions)
+  - [3.4 Rasterize seismic lines](#rasterize-seismic-lines)
+- [4 References](#references)
 
 # 1 Overview
 
@@ -97,7 +97,7 @@ polygons lost.*
 
 # 3 Data processing
 
-# 4 Rasterize subregions
+## 3.1 Rasterize subregions
 
 An ST-Sim model requires a raster that delineates the study area. In
 many ST-Sim analyses, there will be \>1 sub-region within the main study
@@ -193,7 +193,7 @@ Although a substantial portion of the study are is in the Lower Boreal
 Highlands, at this point we will assume constant parameters across the
 area (i.e., no sub-regions in the model).
 
-# 5 Rasterize landcover
+## 3.2 Rasterize landcover
 
 I am classifying landcover using the Alberta Derived Ecosite Phase
 database \[governmentofalberta2020\], which classifies landcover
@@ -288,7 +288,7 @@ plot(dep_l3_hart)  # Give it the eye test
 writeRaster(dep_l3_hart, "0_data/processed/rasters/dep_l3_hart.tif", overwrite = TRUE)
 ```
 
-# 6 Historic fire distributions
+## 3.3 Historic fire distributions
 
 I am simulating temporal variability in overall burn probabilities, and
 typical fire sizes, by deriving them from Alberta’s historic fire
@@ -361,7 +361,7 @@ print(area_bins)
 write.csv(area_bins, "0_data/st-sim/fire_area_bins.csv", row.names = FALSE)
 ```
 
-# 7 Rasterize seismic lines
+## 3.4 Rasterize seismic lines
 
 An important part of habitat change brought about by energy sector
 development is the creation of seismic lines. Thus, tracking seismic
@@ -410,7 +410,7 @@ plot(seismic_l3)
 writeRaster(seismic_l3, "0_data/processed/rasters/seismic_l3.tif")
 ```
 
-# 8 References
+# 4 References
 
 <div id="refs">
 

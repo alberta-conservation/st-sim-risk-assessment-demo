@@ -1,4 +1,4 @@
-# Rasterize landcover 
+## Rasterize landcover 
 
 I am classifying landcover using the Alberta Derived Ecosite Phase database [governmentofalberta2020], which classifies landcover polygons according to geography, soil, moisture regime, and dominant vegetation. These instructions are for interacting with the data stored in a PostgreSQL database, but if you have it stored in another place, just modify your code to interact with it that way. 
 

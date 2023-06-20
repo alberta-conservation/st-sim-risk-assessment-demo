@@ -1,4 +1,4 @@
-# Rasterize subregions 
+## Rasterize subregions 
 
 ```{r setup, include=FALSE, cache=FALSE} 
 

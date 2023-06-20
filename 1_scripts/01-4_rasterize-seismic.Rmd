@@ -1,4 +1,4 @@
-# Rasterize seismic lines 
+## Rasterize seismic lines 
 
 An important part of habitat change brought about by energy sector development is the creation of seismic lines. Thus, tracking seismic line recovery is important for assessing effects on wildlife habitat. Also, disturbances such as fire and harvest can effectively 'erase' these lines by re-starting the succession process both on the lines and in the adjacent ecosystem. 
 

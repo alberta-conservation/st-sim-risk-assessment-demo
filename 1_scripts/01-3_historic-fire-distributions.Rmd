@@ -1,4 +1,4 @@
-# Historic fire distributions
+## Historic fire distributions
 
 I am simulating temporal variability in overall burn probabilities, and typical fire sizes, by deriving them from Alberta's historic fire database. This is a shapefile that can be downloaded ![here](https://www.alberta.ca/wildfire-maps-and-data.aspx), as the 'Historic Wildfire Perimeter Data: 1931 to 1922'. 
 
