@@ -53,7 +53,10 @@ dep_l3 <- st_write(dep_l3, con, "dep_l3")
 
 The next step is to rasterize the dep data so that it can be input into the st-sim model. I will start by creating a template raster from the L3 FMU layer using a 100m cell resolution. The I will use the template to rasterize the dep polygons. 
 ```{r, eval = FALSE}
-# Create the template raster
+# Create the template raster 
+
+fmu_l3 <- st_read("0_data/processed/shapefiles/fmu_l3.shp")
+
 box <- st_bbox(fmu_l3)
 
 l3_rast <- terra::crop(rast(xmin = box$xmin, xmax = box$xmax, ymin = box$ymin, ymax = box$ymax, crs = crs(fmu), resolution = 100, vals = 1), vect(fmu_l3), mask = TRUE)
@@ -64,7 +67,7 @@ dep_l3_rast <- terra::crop(terra::rasterize(x = vect(dep_l3), y = l3_rast, field
 plot(dep_l3_rast)
 
 # Write the raster to file
-terra::writeRaster(dep_l3_rast, "0_data/processed/rasters/dep_l3.tif")
+terra::writeRaster(dep_l3_rast, "0_data/processed/rasters/dep_l3.tif", overwrite = TRUE)
 
 ```
 

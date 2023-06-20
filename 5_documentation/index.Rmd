@@ -60,6 +60,9 @@ library(knitr)
 ```{r child = '1_scripts/01-3_historic-fire-distributions.Rmd'}
 ```
 
+```{r child = '1_scripts/01-4_rasterize-seismic.Rmd'}
+```
+
 
 # References
 

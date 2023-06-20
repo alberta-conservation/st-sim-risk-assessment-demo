@@ -1,0 +1,52 @@
+# Rasterize seismic lines 
+
+An important part of habitat change brought about by energy sector development is the creation of seismic lines. Thus, tracking seismic line recovery is important for assessing effects on wildlife habitat. Also, disturbances such as fire and harvest can effectively 'erase' these lines by re-starting the succession process both on the lines and in the adjacent ecosystem. 
+
+```{r setup, include=FALSE, cache=FALSE}
+#Set root directory to R project root
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+
+library(sf)
+library(terra)
+library(RPostgreSQL)
+
+getwd()
+
+``` 
+
+
+The shapefile of current seismic lines can be obtained from ![this link](https://abmi.ca/home/data-analytics/da-top/da-product-overview/Human-Footprint-Products/HF-inventory.html). I used the 'Enhanced for Oil Sands Monitoring Region (2019)' version. This comes as a geodaatabase. Unfortuneately, R and PostGIS don't tend to work well with .gdb files, so for me it was necessary to use QGIS to open the 'o20_SeismicLines_HFIeOSA2019' layer from the geodatabase, and then save it as a shapefile to my project library as "0_data/raw/shapefiles/hfieosa_2019.shp". 
+
+```{r, eval = FALSE}
+# Load the shapefile 
+seismic_osr <- st_read("0_data/raw/shapefiles/hfieosa_2019.shp")
+
+# Validate the geometries
+seismic_osr$geometry <- st_make_valid(seismic_osr$geometry)
+
+# Get the template layer layer
+nrsa <- rast("0_data/processed/rasters/ab_natural_subregions.tif")
+osr <- st_read("0_data/raw/shapefiles/osr_epsg3400.shp")
+
+seismic_rast <- rasterize(vect(seismic_osr), nrsa, field = "FEATURE_TY", touches = TRUE) 
+
+seismic_rast <- crop(seismic_rast, vect(osr), mask = TRUE)
+plot(seismic_rast)
+
+writeRaster(seismic_rast, "0_data/processed/rasters/seismic_osr_2019.tif")
+
+```
+
+Finally, crop the seismic layer to the L3 FMU. 
+
+```{r, eval = FALSE}
+# Load the L3 shapefile 
+fmu_l3 <- st_read("0_data/processed/shapefiles/fmu_l3.shp")
+
+seismic_l3 <- crop(seismic_rast, vect(fmu_l3), mask = TRUE)
+plot(seismic_l3)
+
+writeRaster(seismic_l3, "0_data/processed/rasters/seismic_l3.tif")
+
+```
+

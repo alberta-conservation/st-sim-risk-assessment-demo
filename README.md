@@ -8,7 +8,8 @@
 - [4 Rasterize subregions](#rasterize-subregions)
 - [5 Rasterize landcover](#rasterize-landcover)
 - [6 Historic fire distributions](#historic-fire-distributions)
-- [7 References](#references)
+- [7 Rasterize seismic lines](#rasterize-seismic-lines)
+- [8 References](#references)
 
 # 1 Overview
 
@@ -128,7 +129,7 @@ colnames(fmu) <- tolower(colnames(fmu))
 fmu_l3 <- fmu %>% filter(fmu_name == "L3")
 
 
-ggplot() + geom_sf(data = nrsa, aes(fill = NSRNAME)) +
+ggplot() + geom_sf(data = nrsa, aes(fill = nsrname)) +
   geom_sf(data = fmu_l3, fill = NA, linewidth = 1)
 
 
@@ -243,7 +244,10 @@ FMU layer using a 100m cell resolution. The I will use the template to
 rasterize the dep polygons.
 
 ``` r
-# Create the template raster
+# Create the template raster 
+
+fmu_l3 <- st_read("0_data/processed/shapefiles/fmu_l3.shp")
+
 box <- st_bbox(fmu_l3)
 
 l3_rast <- terra::crop(rast(xmin = box$xmin, xmax = box$xmax, ymin = box$ymin, ymax = box$ymax, crs = crs(fmu), resolution = 100, vals = 1), vect(fmu_l3), mask = TRUE)
@@ -254,7 +258,7 @@ dep_l3_rast <- terra::crop(terra::rasterize(x = vect(dep_l3), y = l3_rast, field
 plot(dep_l3_rast)
 
 # Write the raster to file
-terra::writeRaster(dep_l3_rast, "0_data/processed/rasters/dep_l3.tif")
+terra::writeRaster(dep_l3_rast, "0_data/processed/rasters/dep_l3.tif", overwrite = TRUE)
 ```
 
 Finally, I am using a simplified version of the ecosystem classes for
@@ -357,7 +361,56 @@ print(area_bins)
 write.csv(area_bins, "0_data/st-sim/fire_area_bins.csv", row.names = FALSE)
 ```
 
-# 7 References
+# 7 Rasterize seismic lines
+
+An important part of habitat change brought about by energy sector
+development is the creation of seismic lines. Thus, tracking seismic
+line recovery is important for assessing effects on wildlife habitat.
+Also, disturbances such as fire and harvest can effectively ‘erase’
+these lines by re-starting the succession process both on the lines and
+in the adjacent ecosystem.
+
+The shapefile of current seismic lines can be obtained from ![this
+link](https://abmi.ca/home/data-analytics/da-top/da-product-overview/Human-Footprint-Products/HF-inventory.html).
+I used the ‘Enhanced for Oil Sands Monitoring Region (2019)’ version.
+This comes as a geodaatabase. Unfortuneately, R and PostGIS don’t tend
+to work well with .gdb files, so for me it was necessary to use QGIS to
+open the ‘o20_SeismicLines_HFIeOSA2019’ layer from the geodatabase, and
+then save it as a shapefile to my project library as
+“0_data/raw/shapefiles/hfieosa_2019.shp”.
+
+``` r
+# Load the shapefile 
+seismic_osr <- st_read("0_data/raw/shapefiles/hfieosa_2019.shp")
+
+# Validate the geometries
+seismic_osr$geometry <- st_make_valid(seismic_osr$geometry)
+
+# Get the template layer layer
+nrsa <- rast("0_data/processed/rasters/ab_natural_subregions.tif")
+osr <- st_read("0_data/raw/shapefiles/osr_epsg3400.shp")
+
+seismic_rast <- rasterize(vect(seismic_osr), nrsa, field = "FEATURE_TY", touches = TRUE) 
+
+seismic_rast <- crop(seismic_rast, vect(osr), mask = TRUE)
+plot(seismic_rast)
+
+writeRaster(seismic_rast, "0_data/processed/rasters/seismic_osr_2019.tif")
+```
+
+Finally, crop the seismic layer to the L3 FMU.
+
+``` r
+# Load the L3 shapefile 
+fmu_l3 <- st_read("0_data/processed/shapefiles/fmu_l3.shp")
+
+seismic_l3 <- crop(seismic_rast, vect(fmu_l3), mask = TRUE)
+plot(seismic_l3)
+
+writeRaster(seismic_l3, "0_data/processed/rasters/seismic_l3.tif")
+```
+
+# 8 References
 
 <div id="refs">
 

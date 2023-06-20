@@ -31,7 +31,7 @@ colnames(fmu) <- tolower(colnames(fmu))
 fmu_l3 <- fmu %>% filter(fmu_name == "L3")
 
 
-ggplot() + geom_sf(data = nrsa, aes(fill = NSRNAME)) +
+ggplot() + geom_sf(data = nrsa, aes(fill = nsrname)) +
   geom_sf(data = fmu_l3, fill = NA, linewidth = 1)
 
 
