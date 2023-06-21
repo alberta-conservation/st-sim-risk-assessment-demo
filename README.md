@@ -449,6 +449,55 @@ Note that this Exercise was developed against the following:
 
 ### 4.1.1 Task 1: Setup
 
+``` r
+#Set root directory to R project root
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+
+# Load R packages
+library(rsyncrosim) # package for working with SyncroSim
+```
+
+    ## 
+    ## Attaching package: 'rsyncrosim'
+
+    ## The following object is masked from 'package:terra':
+    ## 
+    ##     project
+
+``` r
+library(terra)      # package for working with raster data
+library(this.path)  # package for setting the working directory
+```
+
+    ## 
+    ## Attaching package: 'this.path'
+
+    ## The following objects are masked from 'package:terra':
+    ## 
+    ##     ext, ext<-
+
+``` r
+library(tidyverse)  # For easier data manipulation
+library(tidyterra)  
+```
+
+    ## 
+    ## Attaching package: 'tidyterra'
+
+    ## The following object is masked from 'package:kableExtra':
+    ## 
+    ##     group_rows
+
+    ## The following object is masked from 'package:stats':
+    ## 
+    ##     filter
+
+``` r
+# Check to see if the stsim SyncroSim package is installed (and install it if necessary)
+myInstalledPackages = package()
+if (!(is.element("stsim", myInstalledPackages$name))) addPackage("stsim")
+```
+
 ### 4.1.2 Task 2: Create the new library
 
 ``` r
@@ -478,7 +527,7 @@ saveDatasheet(myProject, sheetData, "stsim_Terminology")
 datasheet(myProject, "stsim_Terminology")
 ```
 
-Define the strata, state classes, and transition types
+Define the strata and state classes
 
 ``` r
 # Stratum: make the primary stratum 'Entire Forest'
@@ -502,7 +551,7 @@ saveDatasheet(myProject, data.frame(Name="All"), "stsim_StateLabelY", force=T)
 datasheet(myProject, "stsim_StateLabelY", optional = TRUE)
 ```
 
-List the tansition types to be used in the model
+List the transition types to be used in the model
 
 ``` r
 # Transition Types
@@ -601,7 +650,7 @@ saveDatasheet(myScenario, , sheetName)
 datasheet(myScenario, "stsim_InitialConditionsSpatial")
 ```
 
-Set the results to be saved
+### 4.1.4 Task 4: Run the scenario and analyze results
 
 ``` r
 # Run the scenario: 
@@ -613,7 +662,7 @@ myDataSheetGuide <- datasheet(myScenario, summary = TRUE)  # The list is long!
 backup(myLibrary)  # Backup of your library - automatically zipped into a .backup subfolder
 ```
 
-### 4.1.4 Analyze the tabular output
+Analyze the tabular output
 
 ``` r
 scenario(myLibrary)

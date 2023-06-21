@@ -63,6 +63,11 @@ library(knitr)
 ```{r child = '1_scripts/01-4_rasterize-seismic.Rmd'}
 ```
 
+# Run ST-Sim models through SyncroSim software 
+```{r child = '1_scripts/02-1_run-basic-stsim.Rmd'}
+```
+
+
 
 # References
 

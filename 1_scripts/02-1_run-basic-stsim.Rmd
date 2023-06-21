@@ -25,7 +25,7 @@ Note that this Exercise was developed against the following:
 
 
 ### Task 1: Setup
-```{r setup, include=FALSE, cache=FALSE}
+```{r setup, cache=FALSE}
 #Set root directory to R project root
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 
@@ -45,7 +45,7 @@ if (!(is.element("stsim", myInstalledPackages$name))) addPackage("stsim")
 ```
 
 ### Task 2: Create the new library
-```{r, eval = FALSE}
+```{r create library, eval = FALSE}
 # Create a new library
 # NOTE: this will only create a new library if the file doesn't exist already
 myLibrary <- ssimLibrary("2_pipeline/st-sim/alpac_l3_demo")
@@ -61,7 +61,7 @@ dataSheets <- datasheet(myProject, summary=T)
 ```
 
 Re-set some of the terminology 
-```{r, eval = FALSE}
+```{r terminology, eval = FALSE}
 # Terminology: change units to 'Hecatares' and labels to 'Forest Type'
 sheetData <- datasheet(myProject, "stsim_Terminology")
 sheetData
@@ -71,8 +71,8 @@ saveDatasheet(myProject, sheetData, "stsim_Terminology")
 datasheet(myProject, "stsim_Terminology")
 ```
 
-Define the strata, state classes, and transition types 
-```{r, eval = FALSE}
+Define the strata and state classes 
+```{r strata-classes, eval = FALSE}
 # Stratum: make the primary stratum 'Entire Forest'
 sheetData <- datasheet(myProject, "stsim_Stratum", optional = TRUE, empty=T)   # Returns empty dataframe with only required column(s)
 sheetData <- addRow(sheetData, data.frame(Name = "Entire Forest", ID = 1))
@@ -94,8 +94,8 @@ saveDatasheet(myProject, data.frame(Name="All"), "stsim_StateLabelY", force=T)
 datasheet(myProject, "stsim_StateLabelY", optional = TRUE)
 ```
 
-List the tansition types to be used in the model 
-```{r, eval = FALSE}
+List the transition types to be used in the model 
+```{r transition-types, eval = FALSE}
 # Transition Types
 transitionTypes <- data.frame(Name = "Succession", ID = 1, Color = "255,0,128,0")
 saveDatasheet(myProject, transitionTypes, "stsim_TransitionType", force=T)
@@ -103,7 +103,7 @@ datasheet(myProject, "stsim_TransitionType", optional=T)   # Returns entire data
 ```
 
 Create the final state classes for the model 
-```{r, eval = FALSE}
+```{r state classes, eval = FALSE}
 # State Classes
 stateClasses <- datasheet(myProject, name="stsim_StateClass", empty = TRUE, optional = TRUE)
 
@@ -119,7 +119,7 @@ datasheet(myProject, "stsim_StateClass", optional=T)
 
 ### Task 3: Create new Scenario (within this Project) and setup the Scenario Properties
 
-```{r, eval = FALSE}
+```{r scenario, eval = FALSE}
 
 # Create a new SyncroSim "Succession Only" scenario
 myScenario <- scenario(myProject, "Succession Only")
@@ -138,7 +138,7 @@ datasheet(myScenario, "stsim_RunControl")
 ```
 
 Set the transition probabilities 
-```{r, eval = FALSE}
+```{r transition probabilities, eval = FALSE}
 
 # Deterministic transitions 
 sheetName <- "stsim_DeterministicTransition"
@@ -180,7 +180,7 @@ datasheet(myScenario, "stsim_Transition")
 ```
 
 Set the initial conditions 
-```{r, eval = FALSE}
+```{r initial conditions, eval = FALSE}
 
 # Initial Conditions (spatial) 
 sheetName <- "stsim_InitialConditionsSpatial"
@@ -197,8 +197,8 @@ datasheet(myScenario, "stsim_InitialConditionsSpatial")
 ```
 
 
-Set the results to be saved 
-```{r, eval = FALSE} 
+### Task 4: Run the scenario and analyze results
+```{r run, eval = FALSE} 
 # Run the scenario: 
 resultSummary <- run(myProject, scenario="Succession Only", jobs=6)   # Uses multiprocessing
 resultSummary
@@ -209,8 +209,9 @@ backup(myLibrary)  # Backup of your library - automatically zipped into a .backu
 
 
 ```
-### Analyze the tabular output 
-```{r, eval = FALSE}
+
+Analyze the tabular output 
+```{r analyze, eval = FALSE}
 
 scenario(myLibrary)
 myResults <- scenario(myLibrary, scenario = 2)
