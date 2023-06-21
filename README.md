@@ -9,7 +9,10 @@
   - [3.2 Rasterize landcover](#rasterize-landcover)
   - [3.3 Historic fire distributions](#historic-fire-distributions)
   - [3.4 Rasterize seismic lines](#rasterize-seismic-lines)
-- [4 References](#references)
+- [4 Run ST-Sim models through SyncroSim
+  software](#run-st-sim-models-through-syncrosim-software)
+  - [4.1 Run basic ST-Sim model](#run-basic-st-sim-model)
+- [5 References](#references)
 
 # 1 Overview
 
@@ -410,7 +413,232 @@ plot(seismic_l3)
 writeRaster(seismic_l3, "0_data/processed/rasters/seismic_l3.tif")
 ```
 
-# 4 References
+# 4 Run ST-Sim models through SyncroSim software
+
+## 4.1 Run basic ST-Sim model
+
+These are the instructions for creating a SyncroSim library and running
+a very basic state-and-transition simulation modle using the data
+created in the previous steps.
+
+For users who have never worked with SyncroSim before, it would be very
+helpful to go over the ![getting started gudes and
+documentation](https://docs.syncrosim.com/)
+
+The bulk of this code was derived from the ![ApexRMS rsyncrosim
+documentation](https://syncrosim.github.io/rsyncrosim/index.html).
+
+IMPORTANT SETUP INSTRUCTIONS
+
+Before running this script: 1. Install SyncroSim software (preferably
+Windows version - see www.syncrosim.com/download) 2. Install rysncrosim,
+raster and rgdal R packages (from CRAN)
+
+Note that this Exercise was developed against the following:
+
+- SyncroSim - version 2.4.18 (note that instructions below assume
+  Windows version but works also with Linux)  
+- R - version 4.2.2  
+- SyncroSim packages:
+  - stim - version 3.3.10  
+- R packages:
+  - rsyncrosim - version 1.4.2
+  - terra - version 1.7-37 (which requires rgdal package to be installed
+    also)
+  - this.path - version 1.2.0
+
+### 4.1.1 Task 1: Setup
+
+### 4.1.2 Task 2: Create the new library
+
+``` r
+# Create a new library
+# NOTE: this will only create a new library if the file doesn't exist already
+myLibrary <- ssimLibrary("2_pipeline/st-sim/alpac_l3_demo")
+
+
+# Set up the Project Definitions
+
+myProject <- rsyncrosim::project(myLibrary, project="Definitions")
+rsyncrosim::project(myLibrary, summary=TRUE)     # Lists the projects in this library
+
+# Display internal names of all the project's datasheets - corresponds to the Project Properties in SyncroSim
+dataSheets <- datasheet(myProject, summary=T)
+```
+
+Re-set some of the terminology
+
+``` r
+# Terminology: change units to 'Hecatares' and labels to 'Forest Type'
+sheetData <- datasheet(myProject, "stsim_Terminology")
+sheetData
+sheetData$AmountUnits[1] <- "Hectares"
+sheetData$StateLabelX[1] <- "Forest Type"
+saveDatasheet(myProject, sheetData, "stsim_Terminology")
+datasheet(myProject, "stsim_Terminology")
+```
+
+Define the strata, state classes, and transition types
+
+``` r
+# Stratum: make the primary stratum 'Entire Forest'
+sheetData <- datasheet(myProject, "stsim_Stratum", optional = TRUE, empty=T)   # Returns empty dataframe with only required column(s)
+sheetData <- addRow(sheetData, data.frame(Name = "Entire Forest", ID = 1))
+saveDatasheet(myProject, sheetData, "stsim_Stratum", force=T)
+datasheet(myProject, "stsim_Stratum", optional=T)   # Returns entire dataframe, including optional columns
+
+# First State Class Label (i.e. Forest Types): get from the 
+dep_lookup <- read.csv("0_data/st-sim/dep_lookup.csv")
+
+states <- data.frame(state = levels(as.factor(dep_lookup$ep_code_hart)), state_num = as.numeric(as.factor(dep_lookup$ep_code_hart), hab_type = ))
+
+states <- data.frame(dep_lookup %>% distinct(ep_code_hart, hab_type_hart))
+
+saveDatasheet(myProject, data.frame(Name = states$ep_code_hart, Description = states$hab_type_hart), "stsim_StateLabelX", force=T)
+datasheet(myProject, "stsim_StateLabelX", optional = TRUE)
+
+# Second State Label (not used)
+saveDatasheet(myProject, data.frame(Name="All"), "stsim_StateLabelY", force=T)
+datasheet(myProject, "stsim_StateLabelY", optional = TRUE)
+```
+
+List the tansition types to be used in the model
+
+``` r
+# Transition Types
+transitionTypes <- data.frame(Name = "Succession", ID = 1, Color = "255,0,128,0")
+saveDatasheet(myProject, transitionTypes, "stsim_TransitionType", force=T)
+datasheet(myProject, "stsim_TransitionType", optional=T)   # Returns entire dataframe, including optional columns
+```
+
+Create the final state classes for the model
+
+``` r
+# State Classes
+stateClasses <- datasheet(myProject, name="stsim_StateClass", empty = TRUE, optional = TRUE)
+
+for(i in 1:nrow(states)){
+  stateClasses <- addRow(stateClasses, data.frame(Name = paste0(states$ep_code_hart[i], ":All"), 
+                                                  StateLabelXID = states$ep_code_hart[i], 
+                                                  StateLabelYID = "All", 
+                                                  ID = i))
+}
+saveDatasheet(myProject, stateClasses, "stsim_StateClass", force=T)
+datasheet(myProject, "stsim_StateClass", optional=T)
+```
+
+### 4.1.3 Task 3: Create new Scenario (within this Project) and setup the Scenario Properties
+
+``` r
+# Create a new SyncroSim "Succession Only" scenario
+myScenario <- scenario(myProject, "Succession Only")
+
+# Display the internal names of all the scenario datasheets
+myDataSheetGuide <- subset(datasheet(myScenario, summary=T), scope == "scenario")   # Generate list of all Datasheets as reference
+
+# Edit the scenario datasheets:
+
+# Run Control - Note that we will set this as a non-spatial run
+sheetName <- "stsim_RunControl"
+sheetData <- data.frame(MaximumIteration = 100, MinimumTimestep = 0, MaximumTimestep = 50, isSpatial = T)
+saveDatasheet(myScenario, sheetData, sheetName)
+datasheet(myScenario, "stsim_RunControl")
+```
+
+Set the transition probabilities
+
+``` r
+# Deterministic transitions 
+sheetName <- "stsim_DeterministicTransition"
+sheetData <- datasheet(myScenario, sheetName, empty=T)
+
+trans <- stateClasses %>% filter(Name != "f:All") %>% select(Name) 
+trans$Location <- sapply(1:nrow(trans), function(x) paste0("A", x))
+colnames(trans) <- colnames(sheetData)
+
+for(i in 1:nrow(trans)){
+  sheetData <- addRow(sheetData, data.frame(trans[i, ]))
+}
+saveDatasheet(myScenario, sheetData, sheetName)
+datasheet(myScenario, "stsim_DeterministicTransition")
+
+# Get the transition probabilities datasheet 
+transitions <- read.csv("0_data/st-sim/hart-transition-probs.csv")
+
+# Add the probabilities during each time step 
+sheetName <- "stsim_Transition"
+sheetData <- datasheet(myScenario, sheetName, optional=T, empty=T) 
+sheetData <- sheetData %>% select(StateClassIDSource, StateClassIDDest, TransitionTypeID, Probability, AgeMin)
+
+# Format the data
+trans_2 <- data.frame(StateClassIDSource = stateClasses$Name[match(transitions$From_class, stateClasses$StateLabelXID)], 
+                      StateClassIDDest = stateClasses$Name[match(transitions$To_class, stateClasses$StateLabelXID)], 
+                      TransitionTypeID = transitions$Type, 
+                      Probability = transitions$Probability, 
+                      AgeMin = transitions$Min_age)
+trans_2[trans_2 == 0] <- NA
+
+# use the addRow function to add each transition 
+for(i in 1:nrow(trans_2)){
+  sheetData <- addRow(sheetData, trans_2[i, ])
+}
+saveDatasheet(myScenario, sheetData, sheetName)
+datasheet(myScenario, "stsim_Transition")
+```
+
+Set the initial conditions
+
+``` r
+# Initial Conditions (spatial) 
+sheetName <- "stsim_InitialConditionsSpatial"
+sheetData <- datasheet(myScenario, sheetName , optional=T, empty=T)
+fp <- file.path(getwd(), "0_data/processed/rasters")
+
+sheetData <- addRow(sheetData, data.frame(StratumFileName = file.path(fp, "l3_rast.tif"), StateClassFileName = file.path(fp, "dep_l3_hart.tif"), 
+                                          AgeFileName = file.path(fp, "age_l3_sim.tif")))
+
+saveDatasheet(myScenario, , sheetName)
+datasheet(myScenario, "stsim_InitialConditionsSpatial")
+```
+
+Set the results to be saved
+
+``` r
+# Run the scenario: 
+resultSummary <- run(myProject, scenario="Succession Only", jobs=6)   # Uses multiprocessing
+resultSummary
+
+myDataSheetGuide <- datasheet(myScenario, summary = TRUE)  # The list is long! 
+
+backup(myLibrary)  # Backup of your library - automatically zipped into a .backup subfolder
+```
+
+### 4.1.4 Analyze the tabular output
+
+``` r
+scenario(myLibrary)
+myResults <- scenario(myLibrary, scenario = 2)
+
+# Retrieve raw tabular state class tabular output into a dataframe (see myDatasheetGuide for valid names)
+outRaw <- datasheet(myResults, name="stsim_OutputStratumState") %>% dplyr::arrange(Iteration, StateLabelXID, Timestep)
+
+# Show a bit of this dataframe
+# It is raw output, so it has lots of rows - however you can view it also using RStudio "Environment" pane
+tail(outRaw)
+
+## Re-do the previous aggregation and plotting using dplyr and ggplot2
+outSum <- data.frame(outRaw %>% group_by(Iteration, Timestep, StateLabelXID) %>% summarise(Amount = sum(Amount))) 
+
+outSummary <- data.frame(outSum %>% group_by(Timestep, StateLabelXID) %>% summarise(Mean = mean(Amount), Minimum = min(Amount), Maximum = max(Amount))) 
+
+ggplot() + 
+  geom_line(data = outSummary %>% filter(StateLabelXID == "b2"), colour = "blue",
+            aes(x = Timestep, y = Mean)) + 
+  geom_ribbon(data = outSummary %>% filter(StateLabelXID == "b2"), aes(0:50, ymin = Minimum, ymax = Maximum), fill = "red", alpha = 0.1) +
+  ylab("Total mixed forest area (ha)")
+```
+
+# 5 References
 
 <div id="refs">
 
