@@ -25,7 +25,7 @@ Note that this Exercise was developed against the following:
 
 
 ### Task 1: Setup
-```{r setup, cache=FALSE}
+```{r setup, cache=FALSE, eval = FALSE}
 #Set root directory to R project root
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 

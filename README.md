@@ -455,44 +455,12 @@ knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 
 # Load R packages
 library(rsyncrosim) # package for working with SyncroSim
-```
-
-    ## 
-    ## Attaching package: 'rsyncrosim'
-
-    ## The following object is masked from 'package:terra':
-    ## 
-    ##     project
-
-``` r
 library(terra)      # package for working with raster data
 library(this.path)  # package for setting the working directory
-```
-
-    ## 
-    ## Attaching package: 'this.path'
-
-    ## The following objects are masked from 'package:terra':
-    ## 
-    ##     ext, ext<-
-
-``` r
 library(tidyverse)  # For easier data manipulation
 library(tidyterra)  
-```
 
-    ## 
-    ## Attaching package: 'tidyterra'
 
-    ## The following object is masked from 'package:kableExtra':
-    ## 
-    ##     group_rows
-
-    ## The following object is masked from 'package:stats':
-    ## 
-    ##     filter
-
-``` r
 # Check to see if the stsim SyncroSim package is installed (and install it if necessary)
 myInstalledPackages = package()
 if (!(is.element("stsim", myInstalledPackages$name))) addPackage("stsim")
