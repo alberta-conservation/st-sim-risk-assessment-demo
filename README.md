@@ -18,17 +18,18 @@
 
 One of the most pressing problems in ecology and conservation is
 understanding effects of anthropogenic disturbance and climate change on
-wildlife populations and biodiversity \[@Venier2021\]. Complicating this
-understanding is the fact that these cumulative effects are occurring
-within the context of global climate change, meaning that models based
-on historical responses to disturbance might no longer be valid
-\[@Jackson2021\], leading to unanticipated outcomes from management
-actions. Anticipating and responding to potential ecosystem changes from
-the interactions of anthropogenic disturbance with climate change, and
-risks to biodiversity from those changes, requires a probabilistic
-ecological forecasting approach within a risk assessment framework to
-quantify the risks and uncertainties, and ultimately inform the
-decision-making process \[@milner-gulland2010a\].
+wildlife populations and biodiversity ([Venier et al.
+2021](#ref-Venier2021)). Complicating this understanding is the fact
+that these cumulative effects are occurring within the context of global
+climate change, meaning that models based on historical responses to
+disturbance might no longer be valid ([Jackson 2021](#ref-Jackson2021)),
+leading to unanticipated outcomes from management actions. Anticipating
+and responding to potential ecosystem changes from the interactions of
+anthropogenic disturbance with climate change, and risks to biodiversity
+from those changes, requires a probabilistic ecological forecasting
+approach within a risk assessment framework to quantify the risks and
+uncertainties, and ultimately inform the decision-making process
+([Milner-Gulland et al. 2010](#ref-milner-gulland2010a)).
 
 **Project description** The Objective of this project is to develop a
 simple state-and-transition simulation model and use it to assess the
@@ -110,9 +111,10 @@ single Forest Management Unit (FMU) in Alberta, so we are not too
 worried about sub-regions, but we will go through the process anyway.
 
 We delineate sub-regions using the **Natural Regions and Sub-regions
-database** from the Government of Alberta
-\[@naturalregionscommittee2006\]. This database is made available here
-because it if very difficult to find the downloadable shapefile.
+database** from the Government of Alberta ([Natural Regions Committee
+2006](#ref-naturalregionscommittee2006)). This database is made
+available here because it if very difficult to find the downloadable
+shapefile.
 
 **The Alberta Forest Management Units (FMU) database**, from which we
 will use FMU L3 can be downloaded from Data Basin
@@ -265,8 +267,9 @@ terra::writeRaster(dep_l3_rast, "0_data/processed/rasters/dep_l3.tif", overwrite
 ```
 
 Finally, I am using a simplified version of the ecosystem classes for
-this demo using the 9 classes derived from @hart2019, so we need a look
-up file to reclassify the raster with.
+this demo using the 9 classes derived from Hart et al.
+([2019](#ref-hart2019)), so we need a look up file to reclassify the
+raster with.
 
 ``` r
 # Read in the dep lookup file
@@ -677,7 +680,54 @@ outRaw_age <- datasheet(myResults, name="stsim_OutputSpatialAverageAge")
 
 # 5 References
 
-<div id="refs">
+<div id="refs" class="references csl-bib-body hanging-indent"
+line-spacing="2">
+
+<div id="ref-hart2019" class="csl-entry">
+
+Hart, S. J., J. Henkelman, P. D. McLoughlin, S. E. Nielsen, A.
+Truchon-Savard, and J. F. Johnstone. 2019. [Examining forest resilience
+to changing fire frequency in a fire-prone region of boreal
+forest](https://doi.org/10.1111/gcb.14550). Global Change Biology
+25:869–884.
+
+</div>
+
+<div id="ref-Jackson2021" class="csl-entry">
+
+Jackson, S. T. 2021. [Transformational ecology and climate
+change](https://doi.org/10.1126/science.abj6777). Science (New York,
+N.Y.) 373:1085–1086.
+
+</div>
+
+<div id="ref-milner-gulland2010a" class="csl-entry">
+
+Milner-Gulland, E. J., B. Arroyo, C. Bellard, J. Blanchard, N.
+Bunnefeld, M. Delibes-Mateos, C. Edwards, A. Nuno, L. Palazy, S. Reljic,
+P. Riera, and T. Skrbinsek. 2010. [New directions in management strategy
+evaluation through cross-fertilization between fisheries science and
+terrestrial conservation](https://doi.org/10.1098/rsbl.2010.0588).
+Biology Letters 6:719–722.
+
+</div>
+
+<div id="ref-naturalregionscommittee2006" class="csl-entry">
+
+Natural Regions Committee. 2006. [Natural Regions and Subregions of
+Alberta](https://www.albertaparks.ca/media/2942026/nrsrcomplete_may_06.pdf).
+Government of Alberta.
+
+</div>
+
+<div id="ref-Venier2021" class="csl-entry">
+
+Venier, L. A., R. Walton, and J. P. Brandt. 2021. [Scientific
+considerations and challenges for addressing cumulative effects in
+forest landscapes in Canada](https://doi.org/10.1139/er-2019-0072).
+Environmental Reviews 29:1–22.
+
+</div>
 
 </div>
 
