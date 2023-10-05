@@ -82,14 +82,12 @@ datasheet(myProject, "stsim_Stratum", optional=T)   # Returns entire dataframe, 
 # First State Class Label (i.e. Forest Types): get from the 
 dep_lookup <- read.csv("0_data/st-sim/dep_lookup.csv")
 
-states <- data.frame(state = levels(as.factor(dep_lookup$ep_code_hart)), state_num = as.numeric(as.factor(dep_lookup$ep_code_hart), hab_type = ))
-
 states <- data.frame(dep_lookup %>% distinct(ep_code_hart, hab_type_hart))
 
 saveDatasheet(myProject, data.frame(Name = states$ep_code_hart, Description = states$hab_type_hart), "stsim_StateLabelX", force=T)
 datasheet(myProject, "stsim_StateLabelX", optional = TRUE)
 
-# Second State Label (not used)
+# Second State Label 
 saveDatasheet(myProject, data.frame(Name="All"), "stsim_StateLabelY", force=T)
 datasheet(myProject, "stsim_StateLabelY", optional = TRUE)
 ```
@@ -131,7 +129,7 @@ myDataSheetGuide <- subset(datasheet(myScenario, summary=T), scope == "scenario"
 
 # Run Control - Note that we will set this as a non-spatial run
 sheetName <- "stsim_RunControl"
-sheetData <- data.frame(MaximumIteration = 100, MinimumTimestep = 0, MaximumTimestep = 50, isSpatial = T)
+sheetData <- data.frame(MaximumIteration = 5, MinimumTimestep = 0, MaximumTimestep = 10, isSpatial = T)
 saveDatasheet(myScenario, sheetData, sheetName)
 datasheet(myScenario, "stsim_RunControl")
 
@@ -190,9 +188,26 @@ fp <- file.path(getwd(), "0_data/processed/rasters")
 sheetData <- addRow(sheetData, data.frame(StratumFileName = file.path(fp, "l3_rast.tif"), StateClassFileName = file.path(fp, "dep_l3_hart.tif"), 
                                           AgeFileName = file.path(fp, "age_l3_sim.tif")))
 
-saveDatasheet(myScenario, , sheetName)
+saveDatasheet(myScenario, sheetData, sheetName)
 datasheet(myScenario, "stsim_InitialConditionsSpatial")
 
+
+```
+
+```{r output options, eval = FALSE}
+
+# Set the tabular output options 
+saveDatasheet(myScenario, data.frame(SummaryOutputSC = TRUE, SummaryOutputSCTimesteps = 1, SummaryOutputSCAges = TRUE, stsim_OutputSpatialAverageAge = TRUE), "stsim_OutputOptions")
+              
+datasheet(myScenario, "stsim_OutputOptions")
+
+
+# Set the spatial output options 
+saveDatasheet(myScenario, data.frame(RasterOutputSC = TRUE, RasterOutputSCTimesteps = 1, 
+                                     RasterOutputAge = TRUE, RasterOutputAgeTimesteps = 1, 
+                                     RasterOutputTR = TRUE, RasterOutputTRTimesteps = 1), 
+              "stsim_OutputOptionsSpatial")
+datasheet(myScenario, "stsim_OutputOptionsSpatial")
 
 ```
 
@@ -231,12 +246,19 @@ outSummary <- data.frame(outSum %>% group_by(Timestep, StateLabelXID) %>% summar
 ggplot() + 
   geom_line(data = outSummary %>% filter(StateLabelXID == "b2"), colour = "blue",
             aes(x = Timestep, y = Mean)) + 
-  geom_ribbon(data = outSummary %>% filter(StateLabelXID == "b2"), aes(0:50, ymin = Minimum, ymax = Maximum), fill = "red", alpha = 0.1) +
+  geom_ribbon(data = outSummary %>% filter(StateLabelXID == "b2"), aes(0:50, ymin = Minimum, ymax = Maximum), fill = "blue", alpha = 0.1) +
   ylab("Total mixed forest area (ha)")
 
 
 ```
 
+```{r, eval = FALSE}
+# Retrieve raw tabular state class tabular output into a dataframe (see myDatasheetGuide for valid names)
+outRaw_age <- datasheet(myResults, name="stsim_OutputSpatialAverageAge") 
+
+%>% dplyr::arrange(Iteration, StateLabelXID, Timestep)
+
+```
 
 
 

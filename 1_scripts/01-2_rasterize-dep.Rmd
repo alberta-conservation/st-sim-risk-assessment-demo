@@ -72,7 +72,7 @@ terra::writeRaster(dep_l3_rast, "0_data/processed/rasters/dep_l3.tif", overwrite
 ```
 
 
-Finally, I am using a simplified version of the ecosystem classes for this demo using the 9 classes derived from @Hart2019, so we need a look up file to reclassify the raster with. 
+Finally, I am using a simplified version of the ecosystem classes for this demo using the 9 classes derived from @hart2019, so we need a look up file to reclassify the raster with. 
 
 ```{r, eval = FALSE}
 # Read in the dep lookup file
